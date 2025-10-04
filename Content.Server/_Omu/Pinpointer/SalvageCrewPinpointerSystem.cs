@@ -41,7 +41,9 @@ public sealed class SalvageCrewPinpointerSystem : EntitySystem
                 if (!TryComp<IdCardComponent>(pin.Targets.First(), out var card))
                     continue;
                 _speech.TrySendInGameICMessage(uid,
-                    $"Salvager {card.FullName ?? "ERROR"} remained stationary for {FormatFailedChecks(salv)} minute(s).",
+                    Loc.GetString("salvage-crew-pinpointer-chat-stationary",
+                            ("name", (card.FullName ?? "ERROR")),
+                            ("time", FormatFailedChecks(salv))),
                     InGameICChatType.Speak,
                     false);
                 salv.FailedChecks++;
@@ -63,15 +65,25 @@ public sealed class SalvageCrewPinpointerSystem : EntitySystem
             return;
         if (!TryComp<IdCardComponent>(pinpointer.Targets.First(), out var idCard))
             return;
+        if (!(TryComp<TransformComponent>(pinpointer.Targets.First(), out var cardXform) &&
+            TryComp<TransformComponent>(entity, out var pinXform)))
+            return;
 
 
         if (!args.IsInDetailsRange || pinpointer.TargetName == null)
             return;
         args.PushMarkup(Loc.GetString("examine-pinpointer-linked", ("target", idCard.FullName ?? "ERROR")));
-        args.PushMarkup($"Salvager remained stationary for: {FormatFailedChecks(comp)} minute(s)");
+        args.PushMarkup(Loc.GetString("salvage-crew-pinpointer-examine-stationary", ("time", FormatFailedChecks(comp))));
+        if (cardXform.MapID != pinXform.MapID)
+            args.PushMarkup(Loc.GetString("salvage-crew-pinpointer-examine-off-map"));
+        else
+        {
+            var dist = (_transform.GetWorldPosition(cardXform) - _transform.GetWorldPosition(pinXform)).Length();
+            args.PushMarkup(Loc.GetString("salvage-crew-pinpointer-examine-distance", ("dist", dist.ToString("N0"))));
+        }
     }
 
     private string FormatFailedChecks(SalvageCrewPinpointerComponent pin) =>
-        ((double) pin.FailedChecks * pin.CheckInterval.TotalMinutes).ToString("N1");
+        ((double) pin.FailedChecks * pin.CheckInterval.TotalMinutes).ToString("N0");
 
 }
