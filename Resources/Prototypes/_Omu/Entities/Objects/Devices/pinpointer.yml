@@ -15,5 +15,17 @@
   - type: Icon
     state: pinpointer-station
   - type: Pinpointer
-    CanTargetMultiple: false
-
+    updateTargetName: true
+    canRetarget: true
+    canExamine: false
+    canTargetMultiple: false
+    respectsCrossMaps: true
+    whitelist:
+      tags:
+      - SalvagePinpointer
+    retargetingWhitelist:
+      tags:
+      - SalvagePinpointer
+  - type: SalvageCrewPinpointer
+  - type: Speech
+    speechSounds: Borg
