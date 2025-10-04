@@ -14,6 +14,7 @@ public sealed partial class SalvageCrewPinpointerComponent : Component
     /// <summary>
     /// How much time it takes until the pinpointer checks for movement again
     /// </summary>
+    [DataField]
     public TimeSpan CheckInterval = TimeSpan.FromMinutes(2);
 
     /// <summary>

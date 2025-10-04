@@ -40,13 +40,13 @@ public sealed class SalvageCrewPinpointerSystem : EntitySystem
             {
                 if (!TryComp<IdCardComponent>(pin.Targets.First(), out var card))
                     continue;
+                salv.FailedChecks++;
                 _speech.TrySendInGameICMessage(uid,
                     Loc.GetString("salvage-crew-pinpointer-chat-stationary",
                             ("name", (card.FullName ?? "ERROR")),
                             ("time", FormatFailedChecks(salv))),
                     InGameICChatType.Speak,
                     false);
-                salv.FailedChecks++;
             }
             else
             {
